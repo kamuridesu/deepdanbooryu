@@ -9,6 +9,7 @@ app = Flask(__name__)
 
 emitter = EventEmitter()
 handlers = CallbacksHandlers()
+EVENTS: list[Event] = []
 
 
 @app.route("/events", methods=["GET"])
@@ -56,6 +57,7 @@ async def upload():
     file = request.files["file"]
     encoded = b64encode(file.stream.read()).decode("utf-8")
     event = Event.new("danbooru_new_image", encoded, json.loads)
+    EVENTS.append(event)
     await emitter.send(event)
     return f'Uploaded! Go to <a href="/result?id={event.identifier}">the results page</a> to see if the result is ready!'
 
@@ -65,7 +67,7 @@ async def result():
     if request.method == "GET":
         event_exists = False
         if _id := request.args.get("id"):
-            for event in emitter.events:
+            for event in EVENTS:
                 if event.identifier == _id:
                     event_exists = True
                     if event.answered:
