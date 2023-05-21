@@ -9,6 +9,7 @@ from deepdanbooru_web.src.config import USERNAME, PASSWORD
 async def client():
     headers = {"username": USERNAME, "password": PASSWORD}
     async with EventPolling(ev) as poller:
+        print("client started!")
         await poller.start(0.1, custom_headers=headers)
 
 

@@ -65,7 +65,7 @@ async def result():
     if request.method == "GET":
         event_exists = False
         if _id := request.args.get("id"):
-            for event in handlers.events:
+            for event in emitter.events:
                 if event.identifier == _id:
                     event_exists = True
                     if event.answered:

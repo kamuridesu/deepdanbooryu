@@ -3,7 +3,7 @@ import pathlib
 import re
 
 
-async def start_deepdanbooru(temp_path: str):
+async def start_deepdanbooru(temp_path: str, identifier: str):
     docker = aiodocker.Docker()
     regex = r"\([0-1]\.[0-9][0-9][0-9]\).+"
     print("starting docker container")
@@ -24,7 +24,7 @@ async def start_deepdanbooru(temp_path: str):
                 "Binds": volumes,
             },
         },
-        name="deepdanbooru_web",
+        name=f"deepdanbooru_web_{identifier}",
     )
     await container.start()
     await container.wait(timeout=60)
