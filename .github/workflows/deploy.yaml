@@ -33,4 +33,4 @@ jobs:
       - name: Stop and restart docker container
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "sudo docker rm -f ${{ github.event.repository.name }}"
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "sudo docker run --name ${{ github.event.repository.name }} --restart always --memory=100m -d -p 5005:80 ${{ github.repository }} server"
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.IP_ADDR }} "sudo docker run --name ${{ github.event.repository.name }} --restart always -v $(pwd)/data:/app/data --memory=100m -d -p 5005:80 ${{ github.repository }} server"
