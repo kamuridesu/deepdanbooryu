@@ -10,11 +10,13 @@ async def client():
     headers = {"username": USERNAME, "password": PASSWORD}
     async with EventPolling(ev) as poller:
         print("client started!")
-        await poller.start(0.1, custom_headers=headers, server_endpoint="http://localhost:80")
+        await poller.start(
+            0.1, custom_headers=headers, server_endpoint="http://localhost:8080"
+        )
 
 
 def server():
-    app.run(debug=False, host="0.0.0.0", port=80)
+    app.run(debug=False, host="0.0.0.0", port=8080)
 
 
 def main():

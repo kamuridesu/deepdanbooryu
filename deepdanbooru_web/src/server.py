@@ -1,7 +1,7 @@
 import json
-from Shimarin.server.events import Event, EventEmitter, CallbacksHandlers, uuid
+from Shimarin.server.events import Event, EventEmitter, CallbacksHandlers
 from base64 import b64encode
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request
 
 from .config import USERNAME, PASSWORD
 
@@ -36,6 +36,13 @@ async def events_route():
 
 @app.route("/callback")
 async def reply_route():
+    if (username := request.headers.get("username")) and (
+        password := request.headers.get("password")
+    ):
+        if username != USERNAME or password != PASSWORD:
+            return {"ok": False, "message": "Invalid credentials!"}, 401
+    else:
+        return {"ok": False, "message": "Invalid credentials!"}, 401
     data = request.get_json(silent=True)
     if data:
         identifier = data["identifier"]
@@ -72,9 +79,17 @@ async def result():
                     event_exists = True
                     if event.answered:
                         return event.answer
+                    elif event.age > 60:
+                        return {
+                            "error": True,
+                            "message": "Event timed out! Please, try again!",
+                        }
             if event_exists:
-                return "waiting server response, please, reload the page"
-    return "invalid id!"
+                return {
+                    "error": False,
+                    "message": "Waiting for server to process, this may take some time! Please, reload the page!",
+                }
+    return {"error": True, "message": "Invalid Event id! Please, try again!"}
 
 
 if __name__ == "__main__":
