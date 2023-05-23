@@ -5,6 +5,8 @@ from Shimarin.client.events import EventPolling
 from deepdanbooru_web.src.client import ev
 from deepdanbooru_web.src.config import USERNAME, PASSWORD
 
+from gunicorn.app import wsgiapp
+
 
 async def client():
     headers = {"username": USERNAME, "password": PASSWORD}
