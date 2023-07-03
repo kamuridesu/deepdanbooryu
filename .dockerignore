@@ -164,3 +164,4 @@ Dockerfile
 .gitignore
 .vscode
 .github
+*.db

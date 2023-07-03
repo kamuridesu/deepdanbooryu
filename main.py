@@ -11,7 +11,7 @@ async def client():
     async with EventPolling(ev) as poller:
         print("client started!")
         await poller.start(
-            0.1, custom_headers=headers, server_endpoint="http://localhost:80"
+            0.1, custom_headers=headers, server_endpoint="http://localhost"
         )
 
 
