@@ -36,7 +36,11 @@ async def process_image(event: Event):
                     break
         os.rmdir(temp_dir)
         response = {"ok": True, "tags": tags}
+    except ValueError as e:
+        if "DOCKER_HOST" in str(e):
+            response['message'] = "Failed to start Docker engine! Please, contact the admin and read the logs."
+        else:
+            response['message'] = f"Failed: {e}"
     except Exception as e:
-        print(e)
-        response = {"ok": False, "message": "Error decoding media! Please try again!"}
+        response = {"ok": False, "message": f"An error occured: {e}"}
     return await event.reply(response)

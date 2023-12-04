@@ -97,13 +97,16 @@ async def result():
             for event in EVENTS:
                 if event.identifier == _id:
                     event_exists = True
-                    print("event answred")
                     if event.answered:
-                        print("get event answer")
                         answer = event.answer
-                        print("update tags")
-                        update_tags(event_id=event.identifier, tags=json.dumps(answer['tags']))
-                        return answer
+                        print(answer)
+                        if answer['ok']:
+                            update_tags(event_id=event.identifier, tags=json.dumps(answer['tags']))
+                            return answer
+                        return {
+                            "error": True,
+                            "message": answer['message']
+                        }
                     elif event.age > 60:
                         return {
                             "error": True,

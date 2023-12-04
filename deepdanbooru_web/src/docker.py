@@ -10,6 +10,7 @@ async def start_deepdanbooru(temp_path: str, identifier: str):
     volumes = [f"{pathlib.Path(temp_path).absolute()}:/app/data/"]
     print(volumes)
     tags = []
+    # await docker.pull("kamuri/deepdanbooru")
     container = await docker.containers.create_or_replace(
         config={
             "Cmd": [
@@ -34,5 +35,4 @@ async def start_deepdanbooru(temp_path: str, identifier: str):
             tags.append(line.split(" ")[1])
     await container.delete(force=True)
     await docker.close()
-    print("done")
     return tags

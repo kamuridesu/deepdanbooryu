@@ -3,7 +3,7 @@ import sys
 from deepdanbooru_web.src.server import app
 from Shimarin.client.events import EventPolling
 from deepdanbooru_web.src.client import ev
-from deepdanbooru_web.src.config import USERNAME, PASSWORD
+from deepdanbooru_web.src.config import USERNAME, PASSWORD, SERVER_ENDPOINT, SERVER_PORT
 
 
 async def client():
@@ -11,12 +11,12 @@ async def client():
     async with EventPolling(ev) as poller:
         print("client started!")
         await poller.start(
-            0.1, custom_headers=headers, server_endpoint="http://localhost"
+            0.1, custom_headers=headers, server_endpoint=SERVER_ENDPOINT
         )
 
 
 def server():
-    app.run(debug=False, host="0.0.0.0", port=80)
+    app.run(debug=False, host="0.0.0.0", port=SERVER_PORT)
 
 
 def main():
