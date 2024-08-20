@@ -64,7 +64,7 @@ multidict==6.0.4
     #   yarl
 priority==2.0.0
     # via hypercorn
-shimarin[flask]==0.2.1
+shimarin[flask]==0.2.2
     # via
     #   deepdanbooru_web (pyproject.toml)
     #   shimarin

@@ -1,9 +1,10 @@
 import os
-from tempfile import NamedTemporaryFile
 from base64 import b64decode
-from Shimarin.client.events import EventsHandlers, Event
-from .docker import start_deepdanbooru
+from tempfile import NamedTemporaryFile
 
+from Shimarin.client.events import Event, EventsHandlers
+
+from .docker import start_deepdanbooru
 
 ev = EventsHandlers()
 os.makedirs("temp", exist_ok=True)
@@ -38,9 +39,12 @@ async def process_image(event: Event):
         response = {"ok": True, "tags": tags}
     except ValueError as e:
         if "DOCKER_HOST" in str(e):
-            response['message'] = "Failed to start Docker engine! Please, contact the admin and read the logs."
+            print(e)
+            response["message"] = (
+                "Failed to start Docker engine! Please, contact the admin and read the logs."
+            )
         else:
-            response['message'] = f"Failed: {e}"
+            response["message"] = f"Failed: {e}"
     except Exception as e:
         response = {"ok": False, "message": f"An error occured: {e}"}
     return await event.reply(response)

@@ -1,22 +1,29 @@
 import asyncio
 import sys
-from deepdanbooru_web.src.server import app
-from Shimarin.client.events import EventPolling
+
 from deepdanbooru_web.src.client import ev
-from deepdanbooru_web.src.config import USERNAME, PASSWORD, SERVER_ENDPOINT, SERVER_PORT
+from deepdanbooru_web.src.config import (PASSWORD, SERVER_ENDPOINT,
+                                         SERVER_PORT, USERNAME)
 
 
 async def client():
+    from Shimarin.client.events import EventPolling
     headers = {"username": USERNAME, "password": PASSWORD}
     async with EventPolling(ev) as poller:
         print("client started!")
-        await poller.start(
-            0.5, custom_headers=headers, server_endpoint=SERVER_ENDPOINT
-        )
+        await poller.start(0.5, custom_headers=headers, server_endpoint=SERVER_ENDPOINT)
 
 
-def server():
-    app.run(debug=False, host="0.0.0.0", port=SERVER_PORT)
+async def server():
+    from deepdanbooru_web.src.server import app
+    from hypercorn import Config
+    from hypercorn.asyncio import serve
+
+    config = Config()
+    config.accesslog = "-"
+    config.errorlog = "-"
+    config.bind = f"0.0.0.0:{SERVER_PORT}"
+    await serve(app, config)
 
 
 def main():
@@ -30,7 +37,7 @@ def main():
         loop.run_until_complete(asyncio.gather(task))
         loop.run_forever()
     elif arg == "server":
-        server()
+        asyncio.run(server())
     else:
         print("Error! You need to choose server or client!")
         exit(1)

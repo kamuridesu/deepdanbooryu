@@ -1,6 +1,7 @@
-import aiodocker
 import pathlib
 import re
+
+import aiodocker
 
 
 async def start_deepdanbooru(temp_path: str, identifier: str):

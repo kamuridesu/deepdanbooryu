@@ -4,8 +4,8 @@ import logging
 from base64 import b64encode
 
 from flask import Flask, render_template, request
+from Shimarin.plugins.flask_api import CONTEXT_PATH, ShimaApp
 from Shimarin.server.events import Event, EventEmitter
-from Shimarin.plugins.flask_api import ShimaApp, CONTEXT_PATH
 from werkzeug import serving
 
 from .db import *
@@ -18,10 +18,18 @@ EVENTS: list[Event] = []
 
 werkzeug_log = logging.getLogger("werkzeug")
 
+
+@app.route(CONTEXT_PATH + "/health", methods=["GET", "HEAD"])
+async def health():
+    werkzeug_log.disabled = True
+    return {"status": "ok"}, 200
+
+
 @app.route(CONTEXT_PATH + "/")
 async def index():
     werkzeug_log.disabled = False
-    return render_template("index.html")
+    return render_template("index.html", CONTEXT_PATH=CONTEXT_PATH)
+
 
 @app.route(CONTEXT_PATH + "/upload", methods=["POST"])
 async def upload():
@@ -37,7 +45,7 @@ async def upload():
         await emitter.send(event)
         store_event(event.identifier, _hash)
         event_id = event.identifier
-    return f'Uploaded! Go to <a href="/result?id={event_id}">the results page</a> to see if the result is ready!'
+    return f'Uploaded! Go to <a href="{CONTEXT_PATH}/result?id={event_id}">the results page</a> to see if the result is ready!'
 
 
 @app.route(CONTEXT_PATH + "/result")
@@ -58,10 +66,10 @@ async def result():
         if event.answered:
             answer = event.answer
             print(answer)
-            if answer['ok']:
-                update_tags(event_id=event.identifier, tags=json.dumps(answer['tags']))
+            if answer["ok"]:
+                update_tags(event_id=event.identifier, tags=json.dumps(answer["tags"]))
                 return answer
-            return {"error": True, "message": answer['message']}
+            return {"error": True, "message": answer["message"]}
         if event.age > 60:
             return {"error": True, "message": "Event timed out! Please try again!"}
         return {

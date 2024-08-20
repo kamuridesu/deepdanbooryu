@@ -11,7 +11,9 @@ SQL_CREATE_TABLE = """
         file_hash TEXT,
         tags TEXT
     );
-""".format(TABLE_NAME)
+""".format(
+    TABLE_NAME
+)
 
 
 def create_database():
@@ -33,7 +35,10 @@ def update_tags(event_id, tags):
     try:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute("UPDATE {} SET tags = ? WHERE event_id = ?".format(TABLE_NAME), (tags, event_id))
+        cursor.execute(
+            "UPDATE {} SET tags = ? WHERE event_id = ?".format(TABLE_NAME),
+            (tags, event_id),
+        )
         conn.commit()
     except Error as e:
         print(f"Error updating tags in the database: {e}")
@@ -47,7 +52,12 @@ def store_event(event_id, file_hash):
     try:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO {} (event_id, file_hash, tags) VALUES (?, ?, '')".format(TABLE_NAME), (event_id, file_hash))
+        cursor.execute(
+            "INSERT INTO {} (event_id, file_hash, tags) VALUES (?, ?, '')".format(
+                TABLE_NAME
+            ),
+            (event_id, file_hash),
+        )
         conn.commit()
     except Error as e:
         print(f"Error storing event in the database: {e}")
@@ -61,7 +71,9 @@ def get_tags(event_id):
     try:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute("SELECT tags FROM {} WHERE event_id = ?".format(TABLE_NAME), (event_id,))
+        cursor.execute(
+            "SELECT tags FROM {} WHERE event_id = ?".format(TABLE_NAME), (event_id,)
+        )
         result = cursor.fetchone()
         return result[0] if result else None
     except Error as e:
@@ -77,7 +89,10 @@ def get_event_id(file_hash):
     try:
         conn = sqlite3.connect(DATABASE_FILE)
         cursor = conn.cursor()
-        cursor.execute("SELECT event_id FROM {} WHERE file_hash = ?".format(TABLE_NAME), (file_hash,))
+        cursor.execute(
+            "SELECT event_id FROM {} WHERE file_hash = ?".format(TABLE_NAME),
+            (file_hash,),
+        )
         result = cursor.fetchone()
         return result[0] if result else None
     except Error as e:
